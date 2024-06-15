@@ -20,3 +20,17 @@
 # Go workspace file
 go.work
 go.work.sum
+
+# cache directory build Go
+/.cache
+/.vscode
+/.idea
+
+# configuration file for IDE
+*.sublime-workspace
+*.code-workspace
+*.vscode
+*.idea
+
+# env file
+.env

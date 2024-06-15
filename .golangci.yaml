@@ -1,0 +1,32 @@
+linters-settings:
+  errcheck:
+    ignore: ""
+linters:
+  enable:
+    - dupl
+    - gosec
+    - unconvert
+    - gofmt
+    - goimports
+    - misspell
+    - ineffassign
+    - typecheck
+    - staticcheck
+    - unused
+    - gosimple
+run:
+  concurrency: 4
+  tests: false
+  allow-parallel-runners: true
+  modules-download-mode: readonly
+  go: "1.21"
+
+issues:
+  exclude-use-default: false
+  exclude-rules:
+    - path: _test\.go
+      linters:
+        - gosec
+  max-same-issues: 0
+  max-issues-per-linter: 0
+  fix: true
