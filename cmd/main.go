@@ -3,10 +3,14 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/c483481/todo_go/pkg/gorm"
-	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/c483481/todo_go/internal/controller"
+	"github.com/c483481/todo_go/internal/repository"
+	"github.com/c483481/todo_go/internal/service"
 	"log"
 	"time"
+
+	"github.com/c483481/todo_go/pkg/gorm"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"github.com/c483481/todo_go/internal/config"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
@@ -31,12 +35,17 @@ func main() {
 	gorm.UpMigration(config.MigrationUri)
 
 	// load connection to database
-	gorm.GetDatabase(config.PostgresUri)
+	db := gorm.GetDatabase(config.PostgresUri)
+
+	// initiate repository
+	repo := repository.InitRepository(db)
+
+	// initiate services
+	serv := service.InitServices(repo)
 
 	// set up config app
 	app := fiber.New(fiber.Config{
 		AppName:       Manifest.AppName,
-		StrictRouting: true,                // enables case strict routing
 		CaseSensitive: true,                // enable case-sensitive routing
 		IdleTimeout:   10 * time.Second,    // set idle timeout to 10 second
 		ReadTimeout:   5 * time.Second,     // set read timeout to 5 second
@@ -84,6 +93,9 @@ func main() {
 
 	// add base api status
 	app.Get("/", handler.HandleApiStatus(Manifest))
+
+	// implement all controller
+	controller.ImplController(app, serv)
 
 	app.Use(handler.HandleNotFound())
 

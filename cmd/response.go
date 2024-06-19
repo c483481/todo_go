@@ -16,5 +16,9 @@ func initErrorResponse() {
 			Status:  403,
 			Message: "Forbidden",
 		},
+		"E_CONN_1": {
+			Status:  503,
+			Message: "Database Connection Error",
+		},
 	})
 }
