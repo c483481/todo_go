@@ -23,7 +23,12 @@ This is a simple ToDo List backend application built with Go. It provides a REST
 3. Setup environment variable
    - Create a .env file in the root of the project and add your configuration settings.
    - see the example configuration file from the .enx.example file
-4. Run the application
+
+4. Download dependencies for migrate database
+   ```shell
+   go install -tags "postgres" github.com/golang-migrate/migrate/v4/migrate@latest
+   ```
+5. Run the application
     ```shell
     make run
     ```
