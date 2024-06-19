@@ -9,6 +9,7 @@ import (
 
 func ImplController(app *fiber.App, service *contract.Service) {
 	allController := []controller{
+		implTodoController(),
 	}
 
 	validate := validator.New()
