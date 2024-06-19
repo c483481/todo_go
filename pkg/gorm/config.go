@@ -2,12 +2,13 @@ package gorm
 
 import (
 	"fmt"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
-	"gorm.io/gorm/logger"
 	"log"
 	"os"
 	"time"
+
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
+	"gorm.io/gorm/logger"
 )
 
 func GetDatabase(sqlUri string) *gorm.DB {
@@ -33,7 +34,7 @@ func GetDatabase(sqlUri string) *gorm.DB {
 
 	// check if connection error
 	if err != nil {
-		log.Fatal(fmt.Sprintf("error connect sql. error : %v", err))
+		log.Fatalf("error connect sql. error : %v", err)
 	}
 
 	fmt.Println("success connect database")

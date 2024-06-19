@@ -3,10 +3,11 @@ package main
 import (
 	"errors"
 	"fmt"
-	"github.com/c483481/todo_go/pkg/gorm"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
 	"time"
+
+	"github.com/c483481/todo_go/pkg/gorm"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 
 	"github.com/c483481/todo_go/internal/config"
 	"github.com/gofiber/fiber/v2/middleware/helmet"
