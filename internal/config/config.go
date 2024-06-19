@@ -1,6 +1,7 @@
 package config
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"strconv"
@@ -13,6 +14,8 @@ var (
 	Cors              string
 	IsUseMonitor      bool
 	IdempotencyLength uint8
+	PostgresUri       string
+	MigrationUri      string
 )
 
 func LoadConfig() {
@@ -41,11 +44,44 @@ func LoadConfig() {
 		IsUseMonitor = false
 	}
 
-	l, err := strconv.Atoi(os.Getenv("IDEMPOTENCY_LENGTH"))
-
-	if err != nil {
+	if l, err := strconv.Atoi(os.Getenv("IDEMPOTENCY_LENGTH")); err == nil {
+		IdempotencyLength = uint8(l)
+	} else {
 		log.Fatal("error to get idempotencyLength from .env file")
 	}
 
-	IdempotencyLength = uint8(l)
+	PostgresUri, MigrationUri = loadDatabaseConfig()
+}
+
+func loadDatabaseConfig() (string, string) {
+	dbPort, err := strconv.Atoi(os.Getenv("DB_PORT"))
+	if err != nil {
+		log.Fatal("error to get db port from env")
+	}
+
+	dbPassword := os.Getenv("DB_PASSWORD")
+	if dbPassword == "" {
+		log.Fatal("error to get db password from env")
+	}
+
+	dbUser := os.Getenv("DB_USER")
+	if dbUser == "" {
+		log.Fatal("error to get db user from env")
+	}
+
+	dbHost := os.Getenv("DB_HOST")
+	if dbHost == "" {
+		log.Fatal("error to get db host from env")
+	}
+
+	dbName := os.Getenv("DB_NAME")
+	if dbName == "" {
+		log.Fatal("error to get db name from env")
+	}
+
+	postgresUri := fmt.Sprintf("host=%s user=%s password=%s dbname=%s port=%d sslmode=disable TimeZone=Asia/Jakarta",
+		dbHost, dbUser, dbPassword, dbName, dbPort)
+	migrationUri := fmt.Sprintf("postgres://%s:%s@%s:%d/%s?sslmode=disable", dbUser, dbPassword, dbHost, dbPort, dbName)
+
+	return postgresUri, migrationUri
 }
