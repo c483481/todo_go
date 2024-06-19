@@ -3,6 +3,7 @@ package main
 import (
 	"errors"
 	"fmt"
+	"github.com/c483481/todo_go/pkg/gorm"
 	"github.com/gofiber/fiber/v2/middleware/cors"
 	"log"
 	"time"
@@ -22,7 +23,15 @@ import (
 func main() {
 	// initiate error response
 	initErrorResponse()
+
+	// load configuration
 	config.LoadConfig()
+
+	// up migration
+	gorm.UpMigration(config.MigrationUri)
+
+	// load connection to database
+	gorm.GetDatabase(config.PostgresUri)
 
 	// set up config app
 	app := fiber.New(fiber.Config{
@@ -52,7 +61,7 @@ func main() {
 	// set helmet
 	app.Use(helmet.New())
 
-	// set recover for keep app alive when there a error from handler
+	// set recover for keep app alive when there an error from handler
 	app.Use(recover.New())
 
 	// add idempotency from make sure request doesn't execute twice
