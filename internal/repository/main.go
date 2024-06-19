@@ -7,5 +7,6 @@ import (
 
 func InitRepository(db *gorm.DB) *contract.Repository {
 	return &contract.Repository{
+		Todos: implTodosRepository(db),
 	}
 }
