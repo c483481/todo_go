@@ -27,6 +27,9 @@ func main() {
 	// load configuration
 	config.LoadConfig()
 
+	// up migration
+	gorm.UpMigration(config.MigrationUri)
+
 	// load connection to database
 	gorm.GetDatabase(config.PostgresUri)
 
