@@ -33,6 +33,7 @@ func (t *todosController) initRoute(app fiber.Router) {
 	app.Get("/:xid", t.GetDetail)
 	app.Get("/", t.GetList)
 	app.Put("/:xid", t.PutUpdateTodos)
+	app.Delete("/:xid", t.DeleteTodos)
 }
 
 func (t *todosController) PostCreate(ctx *fiber.Ctx) error {
@@ -94,6 +95,18 @@ func (t *todosController) PutUpdateTodos(ctx *fiber.Ctx) error {
 	}
 
 	return handler.WrapData(ctx, result)
+}
+
+func (t *todosController) DeleteTodos(ctx *fiber.Ctx) error {
+	xid := ctx.Params("xid")
+
+	err := t.service.Delete(xid)
+
+	if err != nil {
+		return err
+	}
+
+	return handler.WrapData(ctx, "success")
 }
 
 func (t *todosController) validateBody(ctx *fiber.Ctx, data any) error {
