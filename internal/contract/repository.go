@@ -8,4 +8,5 @@ type Repository struct {
 
 type TodosRepository interface {
 	Create(todo *models.Todos) error
+	FindByXid(xid string) (*models.Todos, error)
 }

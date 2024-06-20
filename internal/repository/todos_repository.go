@@ -20,3 +20,11 @@ func (t *todosRepository) Create(todo *models.Todos) error {
 	result := t.db.Create(&todo)
 	return result.Error
 }
+
+func (t *todosRepository) FindByXid(xid string) (*models.Todos, error) {
+	todo := &models.Todos{}
+
+	err := t.db.Where("xid = ?", xid).First(&todo).Error
+
+	return todo, err
+}
