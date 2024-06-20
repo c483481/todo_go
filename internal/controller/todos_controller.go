@@ -2,6 +2,7 @@ package controller
 
 import (
 	"fmt"
+
 	"github.com/c483481/todo_go/internal/contract"
 	"github.com/c483481/todo_go/internal/dto/todos"
 	"github.com/c483481/todo_go/pkg/handler"
@@ -29,6 +30,8 @@ func (t *todosController) initService(service *contract.Service, validate *valid
 
 func (t *todosController) initRoute(app fiber.Router) {
 	app.Post("/", t.PostCreate)
+	app.Get("/:xid", t.GetDetail)
+	app.Get("/", t.GetList)
 }
 
 func (t *todosController) PostCreate(ctx *fiber.Ctx) error {
@@ -41,6 +44,30 @@ func (t *todosController) PostCreate(ctx *fiber.Ctx) error {
 	}
 
 	result, err := t.service.Create(payload)
+
+	if err != nil {
+		return err
+	}
+
+	return handler.WrapData(ctx, result)
+}
+
+func (t *todosController) GetDetail(ctx *fiber.Ctx) error {
+	xid := ctx.Params("xid")
+
+	result, err := t.service.Detail(xid)
+
+	if err != nil {
+		return err
+	}
+
+	return handler.WrapData(ctx, result)
+}
+
+func (t *todosController) GetList(ctx *fiber.Ctx) error {
+	payload := handler.GetListOption(ctx)
+
+	result, err := t.service.List(payload)
 
 	if err != nil {
 		return err

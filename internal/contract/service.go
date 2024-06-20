@@ -1,6 +1,9 @@
 package contract
 
-import "github.com/c483481/todo_go/internal/dto/todos"
+import (
+	"github.com/c483481/todo_go/internal/dto/todos"
+	"github.com/c483481/todo_go/pkg/handler"
+)
 
 type Service struct {
 	Todos TodosService
@@ -8,4 +11,6 @@ type Service struct {
 
 type TodosService interface {
 	Create(payload *todos.Payload) (*todos.Result, error)
+	Detail(xid string) (*todos.Result, error)
+	List(payload *handler.ListPayload) (*handler.FindResult[*todos.Result], error)
 }
