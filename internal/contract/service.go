@@ -8,4 +8,5 @@ type Service struct {
 
 type TodosService interface {
 	Create(payload *todos.Payload) (*todos.Result, error)
+	Detail(xid string) (*todos.Result, error)
 }
