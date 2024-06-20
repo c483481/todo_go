@@ -97,6 +97,51 @@ func (t *todoService) List(payload *handler.ListPayload) (*handler.FindResult[*t
 	}, nil
 }
 
+func (t *todoService) Update(payload *todos.UpdatePayload) (*todos.Result, error) {
+	_, err := ulid.ParseStrict(payload.Xid)
+
+	if err != nil {
+		// return not found because xid must be ulid
+		return nil, handler.ErrorResponse.GetError("E_FOUND_1")
+	}
+
+	todo, err := t.todo.FindByXid(payload.Xid)
+
+	if err != nil {
+		// check if the error is Record Not Found
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return nil, handler.ErrorResponse.GetError("E_FOUND_1")
+		}
+		// check if err is database connection loss
+		if strings.Contains(err.Error(), "dial tcp") {
+			return nil, handler.ErrorResponse.GetError("E_CONN_1")
+		}
+		return nil, handler.ErrorResponse.GetIntervalError()
+	}
+
+	todo.Version += 1
+	todo.Title = payload.Title
+	todo.Description = payload.Description
+
+	result, err := t.todo.Update(todo.ID, todo, payload.Version)
+
+	if err != nil {
+		// check if err is database connection loss
+		if strings.Contains(err.Error(), "dial tcp") {
+			return nil, handler.ErrorResponse.GetError("E_CONN_1")
+		}
+		return nil, handler.ErrorResponse.GetIntervalError()
+	}
+
+	// check row affected
+	if result <= 0 {
+		// throw invalid version if row affected less than or equal 0
+		return nil, handler.ErrorResponse.GetError("E_REQ_2")
+	}
+
+	return composeTodo(todo), nil
+}
+
 func composeTodo(row *models.Todos) *todos.Result {
 	return &todos.Result{
 		Xid:         row.Xid,

@@ -20,5 +20,9 @@ func initErrorResponse() {
 			Status:  503,
 			Message: "Database Connection Error",
 		},
+		"E_REQ_2": {
+			Status:  400,
+			Message: "Invalid Version",
+		},
 	})
 }

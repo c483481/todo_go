@@ -13,4 +13,5 @@ type TodosService interface {
 	Create(payload *todos.Payload) (*todos.Result, error)
 	Detail(xid string) (*todos.Result, error)
 	List(payload *handler.ListPayload) (*handler.FindResult[*todos.Result], error)
+	Update(payload *todos.UpdatePayload) (*todos.Result, error)
 }
