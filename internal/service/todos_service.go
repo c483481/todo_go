@@ -73,6 +73,30 @@ func (t *todoService) Detail(xid string) (*todos.Result, error) {
 	return composeTodo(todo), nil
 }
 
+func (t *todoService) List(payload *handler.ListPayload) (*handler.FindResult[*todos.Result], error) {
+	items, err := t.todo.FindList(payload)
+
+	if err != nil {
+		// check if err is database connection loss
+		if strings.Contains(err.Error(), "dial tcp") {
+			return nil, handler.ErrorResponse.GetError("E_CONN_1")
+		}
+		return nil, handler.ErrorResponse.GetIntervalError()
+	}
+
+	result := make([]*todos.Result, 0, len(items.Result))
+
+	// compose list result
+	for _, item := range items.Result {
+		result = append(result, composeTodo(item))
+	}
+
+	return &handler.FindResult[*todos.Result]{
+		Result: result,
+		Count:  items.Count,
+	}, nil
+}
+
 func composeTodo(row *models.Todos) *todos.Result {
 	return &todos.Result{
 		Xid:         row.Xid,
