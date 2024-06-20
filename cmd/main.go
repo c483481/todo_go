@@ -3,11 +3,12 @@ package main
 import (
 	"errors"
 	"fmt"
+	"log"
+	"time"
+
 	"github.com/c483481/todo_go/internal/controller"
 	"github.com/c483481/todo_go/internal/repository"
 	"github.com/c483481/todo_go/internal/service"
-	"log"
-	"time"
 
 	"github.com/c483481/todo_go/pkg/gorm"
 	"github.com/gofiber/fiber/v2/middleware/cors"
