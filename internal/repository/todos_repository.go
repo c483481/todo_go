@@ -71,6 +71,11 @@ func (t *todosRepository) Update(id int64, payload *models.Todos, version int) (
 	return result.RowsAffected, result.Error
 }
 
+func (t *todosRepository) Delete(id int64) (int64, error) {
+	result := t.db.Delete(&models.Todos{}, id)
+	return result.RowsAffected, result.Error
+}
+
 func (t *todosRepository) parseSortBy(order string) string {
 	var sortBy string
 	switch order {
