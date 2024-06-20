@@ -13,4 +13,5 @@ type TodosRepository interface {
 	Create(todo *models.Todos) error
 	FindByXid(xid string) (*models.Todos, error)
 	FindList(payload *handler.ListPayload) (*handler.FindResult[*models.Todos], error)
+	Update(id int64, payload *models.Todos, version int) (int64, error)
 }
