@@ -32,6 +32,7 @@ func (t *todosController) initRoute(app fiber.Router) {
 	app.Post("/", t.PostCreate)
 	app.Get("/:xid", t.GetDetail)
 	app.Get("/", t.GetList)
+	app.Put("/:xid", t.PutUpdateTodos)
 }
 
 func (t *todosController) PostCreate(ctx *fiber.Ctx) error {
@@ -68,6 +69,25 @@ func (t *todosController) GetList(ctx *fiber.Ctx) error {
 	payload := handler.GetListOption(ctx)
 
 	result, err := t.service.List(payload)
+
+	if err != nil {
+		return err
+	}
+
+	return handler.WrapData(ctx, result)
+}
+
+func (t *todosController) PutUpdateTodos(ctx *fiber.Ctx) error {
+	payload := &todos.UpdatePayload{}
+
+	err := t.validateBody(ctx, payload)
+
+	if err != nil {
+		return err
+	}
+
+	payload.Xid = ctx.Params("xid")
+	result, err := t.service.Update(payload)
 
 	if err != nil {
 		return err

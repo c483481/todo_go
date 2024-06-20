@@ -68,7 +68,7 @@ func GetListOption(ctx *fiber.Ctx) *ListPayload {
 	}
 
 	limit := ctx.QueryInt("limit", 10)
-	if limit > 0 {
+	if limit < 0 {
 		result.Limit = 10
 	} else {
 		result.Limit = limit
@@ -82,7 +82,7 @@ func GetListOption(ctx *fiber.Ctx) *ListPayload {
 	}
 
 	skip := ctx.QueryInt("skip", 0)
-	if skip >= 0 {
+	if skip <= 0 {
 		result.Skip = 0
 	} else {
 		result.Skip = skip

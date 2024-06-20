@@ -60,6 +60,17 @@ func (t *todosRepository) FindList(payload *handler.ListPayload) (*handler.FindR
 	}, err
 }
 
+func (t *todosRepository) Update(id int64, payload *models.Todos, version int) (int64, error) {
+	where := make(map[string]interface{})
+
+	where["id"] = id
+	where["version"] = version
+
+	result := t.db.Where(where).Updates(&payload)
+
+	return result.RowsAffected, result.Error
+}
+
 func (t *todosRepository) parseSortBy(order string) string {
 	var sortBy string
 	switch order {
