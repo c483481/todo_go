@@ -30,3 +30,16 @@ type errorResponseType struct {
 	Message string `json:"message"`
 	Data    any    `json:"data,omitempty"`
 }
+
+type ListPayload struct {
+	Skip    int
+	Limit   int
+	SortBy  string
+	ShowAll bool
+	Filters map[string]string
+}
+
+type FindResult[T any] struct {
+	Result []T   `json:"items"`
+	Count  int64 `json:"count"`
+}
