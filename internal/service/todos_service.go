@@ -142,6 +142,45 @@ func (t *todoService) Update(payload *todos.UpdatePayload) (*todos.Result, error
 	return composeTodo(todo), nil
 }
 
+func (t *todoService) Delete(xid string) error {
+	_, err := ulid.ParseStrict(xid)
+
+	if err != nil {
+		// return not found because xid must be ulid
+		return handler.ErrorResponse.GetError("E_FOUND_1")
+	}
+
+	todo, err := t.todo.FindByXid(xid)
+
+	if err != nil {
+		// check if the error is Record Not Found
+		if errors.Is(err, gorm.ErrRecordNotFound) {
+			return handler.ErrorResponse.GetError("E_FOUND_1")
+		}
+		// check if err is database connection loss
+		if strings.Contains(err.Error(), "dial tcp") {
+			return handler.ErrorResponse.GetError("E_CONN_1")
+		}
+		return handler.ErrorResponse.GetIntervalError()
+	}
+
+	result, err := t.todo.Delete(todo.ID)
+
+	if result <= 0 {
+		return handler.ErrorResponse.GetError("E_FOUND_1")
+	}
+
+	if err != nil {
+		// check if err is database connection loss
+		if strings.Contains(err.Error(), "dial tcp") {
+			return handler.ErrorResponse.GetError("E_CONN_1")
+		}
+		return handler.ErrorResponse.GetIntervalError()
+	}
+
+	return nil
+}
+
 func composeTodo(row *models.Todos) *todos.Result {
 	return &todos.Result{
 		Xid:         row.Xid,
