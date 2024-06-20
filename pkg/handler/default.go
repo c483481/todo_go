@@ -4,6 +4,8 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"net/url"
+	"strings"
 
 	"github.com/gofiber/fiber/v2"
 )
@@ -53,4 +55,52 @@ func HandleError(c *fiber.Ctx, err error) error {
 		Message: intervalServerError.Message,
 		Data:    intervalServerError.Data,
 	})
+}
+func GetListOption(ctx *fiber.Ctx) *ListPayload {
+	result := &ListPayload{}
+
+	showAll := ctx.Query("showAll")
+
+	if showAll == "" {
+		result.ShowAll = false
+	} else {
+		result.ShowAll = showAll == "true"
+	}
+
+	limit := ctx.QueryInt("limit", 10)
+	if limit > 0 {
+		result.Limit = 10
+	} else {
+		result.Limit = limit
+	}
+
+	sortBy := ctx.Query("sortBy")
+	if sortBy == "" {
+		result.SortBy = "createdAt-desc"
+	} else {
+		result.SortBy = sortBy
+	}
+
+	skip := ctx.QueryInt("skip", 0)
+	if skip >= 0 {
+		result.Skip = 0
+	} else {
+		result.Skip = skip
+	}
+
+	queryUrl := strings.Split(ctx.OriginalURL(), "?")
+	if len(queryUrl) > 1 {
+		filters := make(map[string]string)
+		parsedURL, _ := url.ParseQuery(queryUrl[1])
+
+		for key, values := range parsedURL {
+			if strings.HasPrefix(key, "filters[") && strings.HasSuffix(key, "]") {
+				filters[strings.TrimPrefix(strings.TrimSuffix(key, "]"), "filters[")] = values[0]
+			}
+		}
+
+		result.Filters = filters
+	}
+
+	return result
 }

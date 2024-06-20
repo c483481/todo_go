@@ -64,7 +64,7 @@ func (t *todosRepository) parseSortBy(order string) string {
 	var sortBy string
 	switch order {
 	case "createdAt-asc":
-		sortBy = "`\"created_at\" ASC"
+		sortBy = "\"created_at\" ASC"
 	case "createdAt-desc":
 		sortBy = "\"created_at\" DESC"
 	case "updatedAt-asc":
